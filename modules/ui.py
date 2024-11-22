@@ -272,13 +272,14 @@ def create_ui():
         extra_tabs = gr.Tabs(elem_id="txt2img_extra_tabs", elem_classes=["extra-networks"])
         extra_tabs.__enter__()
 
-        with gr.Tab("Generation", id="txt2img_generation") as txt2img_generation_tab, ResizeHandleRow(equal_height=False):
+        with gr.Tab("Generation Settings", id="txt2img_generation") as txt2img_generation_tab, ResizeHandleRow(equal_height=False):
             with ExitStack() as stack:
                 if shared.opts.txt2img_settings_accordion:
                     stack.enter_context(gr.Accordion("Open for Settings", open=False))
                 stack.enter_context(gr.Column(variant='compact', elem_id="txt2img_settings"))
 
                 scripts.scripts_txt2img.prepare_ui()
+
 
                 for category in ordered_ui_categories():
                     if category == "prompt":
@@ -491,8 +492,8 @@ def create_ui():
             toprow.token_button.click(fn=wrap_queued_call(update_token_counter), inputs=[toprow.prompt, steps, toprow.ui_styles.dropdown], outputs=[toprow.token_counter])
             toprow.negative_token_button.click(fn=wrap_queued_call(update_negative_prompt_token_counter), inputs=[toprow.negative_prompt, steps, toprow.ui_styles.dropdown], outputs=[toprow.negative_token_counter])
 
-        extra_networks_ui = ui_extra_networks.create_ui(txt2img_interface, [txt2img_generation_tab], 'txt2img')
-        ui_extra_networks.setup_ui(extra_networks_ui, output_panel.gallery)
+        # extra_networks_ui = ui_extra_networks.create_ui(txt2img_interface, [txt2img_generation_tab], 'txt2img')
+        # ui_extra_networks.setup_ui(extra_networks_ui, output_panel.gallery)s
 
         extra_tabs.__exit__()
 
@@ -505,7 +506,7 @@ def create_ui():
         extra_tabs = gr.Tabs(elem_id="img2img_extra_tabs", elem_classes=["extra-networks"])
         extra_tabs.__enter__()
 
-        with gr.Tab("Generation", id="img2img_generation") as img2img_generation_tab, ResizeHandleRow(equal_height=False):
+        with gr.Tab("Generation Settings", id="img2img_generation") as img2img_generation_tab, ResizeHandleRow(equal_height=False):
             with ExitStack() as stack:
                 if shared.opts.img2img_settings_accordion:
                     stack.enter_context(gr.Accordion("Open for Settings", open=False))
@@ -526,6 +527,14 @@ def create_ui():
 
                             button = gr.Button(title)
                             copy_image_buttons.append((button, name, elem))
+                        # for title, name in zip(['img2img', 'sketch', 'inpaint'], ['img2img', 'sketch', 'inpaint']):
+                        #     if name == tab_name:
+                        #         gr.Button(title, interactive=False)
+                        #         copy_image_destinations[name] = elem
+                        #         continue
+
+                        #     button = gr.Button(title)
+                        #     copy_image_buttons.append((button, name, elem))
 
                 scripts.scripts_img2img.prepare_ui()
 
@@ -591,6 +600,7 @@ def create_ui():
                                     img2img_batch_png_info_props = gr.CheckboxGroup(["Prompt", "Negative prompt", "Seed", "CFG scale", "Sampler", "Steps", "Model hash"], label="Parameters to take from png info", info="Prompts from png info will be appended to prompts set in ui.")
 
                             img2img_tabs = [tab_img2img, tab_sketch, tab_inpaint, tab_inpaint_color, tab_inpaint_upload, tab_batch]
+                            img2img_tabs = [tab_img2img, tab_sketch, tab_inpaint]
 
                             for i, tab in enumerate(img2img_tabs):
                                 tab.select(fn=lambda tabnum=i: tabnum, inputs=[], outputs=[img2img_selected_tab])
@@ -861,8 +871,8 @@ def create_ui():
                 paste_button=toprow.paste, tabname="img2img", source_text_component=toprow.prompt, source_image_component=None,
             ))
 
-        extra_networks_ui_img2img = ui_extra_networks.create_ui(img2img_interface, [img2img_generation_tab], 'img2img')
-        ui_extra_networks.setup_ui(extra_networks_ui_img2img, output_panel.gallery)
+        # extra_networks_ui_img2img = ui_extra_networks.create_ui(img2img_interface, [img2img_generation_tab], 'img2img')
+        # ui_extra_networks.setup_ui(extra_networks_ui_img2img, output_panel.gallery)
 
         extra_tabs.__exit__()
 
@@ -1115,23 +1125,23 @@ def create_ui():
     interfaces = [
         (txt2img_interface, "txt2img", "txt2img"),
         (img2img_interface, "img2img", "img2img"),
-        (extras_interface, "Extras", "extras"),
-        (pnginfo_interface, "PNG Info", "pnginfo"),
-        (modelmerger_ui.blocks, "Checkpoint Merger", "modelmerger"),
-        (train_interface, "Train", "train"),
+        # (extras_interface, "Extras", "extras"),
+        # (pnginfo_interface, "PNG Info", "pnginfo"),
+        # (modelmerger_ui.blocks, "Checkpoint Merger", "modelmerger"),
+        # (train_interface, "Train", "train"),
     ]
 
     interfaces += script_callbacks.ui_tabs_callback()
     interfaces += [(settings.interface, "Settings", "settings")]
 
-    extensions_interface = ui_extensions.create_ui()
-    interfaces += [(extensions_interface, "Extensions", "extensions")]
+    # extensions_interface = ui_extensions.create_ui()
+    # interfaces += [(extensions_interface, "Extensions", "extensions")]
 
     shared.tab_names = []
     for _interface, label, _ifid in interfaces:
         shared.tab_names.append(label)
 
-    with gr.Blocks(theme=shared.gradio_theme, analytics_enabled=False, title="Stable Diffusion") as demo:
+    with gr.Blocks(theme=shared.gradio_theme, analytics_enabled=False, title="Advance Image Generation and Editing") as demo:
         settings.add_quicksettings()
 
         parameters_copypaste.connect_paste_params_buttons()
@@ -1167,6 +1177,7 @@ def create_ui():
         demo.load(fn=update_image_cfg_scale_visibility, inputs=[], outputs=[image_cfg_scale])
 
         modelmerger_ui.setup_ui(dummy_component=dummy_component, sd_model_checkpoint_component=settings.component_dict['sd_model_checkpoint'])
+        
 
     if ui_settings_from_file != loadsave.ui_settings:
         loadsave.dump_defaults()
