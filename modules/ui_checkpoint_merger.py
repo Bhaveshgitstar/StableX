@@ -6,12 +6,21 @@ from modules.ui_components import FormRow
 from modules.ui_common import create_refresh_button
 
 
+# def update_interp_description(value):
+#     interp_description_css = "<p style='margin-bottom: 2.5em'>{}</p>"
+#     interp_descriptions = {
+#         "No interpolation": interp_description_css.format("No interpolation will be used. Requires one model; A. Allows for format conversion and VAE baking."),
+#         "Weighted sum": interp_description_css.format("A weighted sum will be used for interpolation. Requires two models; A and B. The result is calculated as A * (1 - M) + B * M"),
+#         "Add difference": interp_description_css.format("The difference between the last two models will be added to the first. Requires three models; A, B and C. The result is calculated as A + (B - C) * M")
+#     }
+#     return interp_descriptions[value]
+
 def update_interp_description(value):
-    interp_description_css = "<p style='margin-bottom: 2.5em'>{}</p>"
+    interp_description_css = ""
     interp_descriptions = {
-        "No interpolation": interp_description_css.format("No interpolation will be used. Requires one model; A. Allows for format conversion and VAE baking."),
-        "Weighted sum": interp_description_css.format("A weighted sum will be used for interpolation. Requires two models; A and B. The result is calculated as A * (1 - M) + B * M"),
-        "Add difference": interp_description_css.format("The difference between the last two models will be added to the first. Requires three models; A, B and C. The result is calculated as A + (B - C) * M")
+        "No interpolation": interp_description_css.format(""),
+        "Weighted sum": interp_description_css.format(""),
+        "Add difference": interp_description_css.format("")
     }
     return interp_descriptions[value]
 
